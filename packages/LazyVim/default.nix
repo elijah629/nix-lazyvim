@@ -1,11 +1,16 @@
 {
   lib,
   fd,
+  fzf,
+  ghostscript,
+  imagemagick,
+  mermaid-cli,
   neovim-unwrapped,
   nodejs,
   python3,
   ripgrep,
   runCommandLocal,
+  tectonic,
   vimPlugins,
   wrapNeovimUnstable,
 }:
@@ -17,6 +22,18 @@ let
       jsregexp
     ]
   );
+  runtimeDependencies = [
+    # For fzf-lua
+    fzf
+    # For fzf-lua, telescope.nvim, and Snacks picker
+    fd
+    ripgrep
+    # For Snacks image
+    ghostscript
+    imagemagick
+    mermaid-cli
+    tectonic
+  ];
   neovimConfigured = wrapNeovimUnstable neovim-unwrapped {
     extraName = "-LazyVim";
     wrapperArgs =
@@ -24,11 +41,7 @@ let
         "--prefix"
         "PATH"
         ":"
-        (lib.makeBinPath [
-          # For telescope.nvim
-          fd
-          ripgrep
-        ])
+        (lib.makeBinPath runtimeDependencies)
       ]
       ++ [
         "--prefix"
@@ -62,10 +75,9 @@ let
           },
           {
             "mason.nvim",
-            opts_extend = {},
-            opts = {
-              ensure_installed = {},
-            },
+            opts = function(_, opts)
+              opts.ensure_installed = {}
+            end,
           },
           {
             "LuaSnip",
@@ -123,11 +135,7 @@ let
 in
 runCommandLocal "LazyVim"
   {
-    buildInputs = [
-      neovimConfigured
-      fd
-      ripgrep
-    ];
+    buildInputs = [ neovimConfigured ] ++ runtimeDependencies;
 
     meta = with lib; {
       description = "Neovim config for the lazy";
