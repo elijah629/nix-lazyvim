@@ -75,9 +75,9 @@ let
           },
           {
             "mason.nvim",
-            opts = function(_, opts)
-              opts.ensure_installed = {}
-            end,
+            opts = {
+              automatic_installation = { exclude = { "clangd" } }
+            },
           },
           {
             "LuaSnip",
