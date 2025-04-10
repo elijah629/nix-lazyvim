@@ -62,7 +62,6 @@ let
       ];
     luaRcContent = ''
       vim.opt.runtimepath:prepend(vim.fn.stdpath("data") .. "/nvim-treesitter/parsers")
-
       require("lazy").setup({
         spec = {
           { "LazyVim/LazyVim", import = "lazyvim.plugins" },
@@ -73,12 +72,24 @@ let
             },
             optional = true,
           },
-          {
-            "mason.nvim",
-            opts = {
-              automatic_installation = { exclude = { "clangd" } }
-            },
-          },
+             {
+      "williamboman/mason.nvim",
+      opts = {
+        ui = {
+          icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗"
+          }
+        }
+      }
+    },
+    {
+      "williamboman/mason-lspconfig.nvim",
+      opts = {
+        automatic_installation = { exclude = { "clangd" } }
+      }
+    },
           {
             "LuaSnip",
             build = "",
